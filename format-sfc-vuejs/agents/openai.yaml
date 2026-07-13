@@ -1,0 +1,4 @@
+interface:
+  display_name: "Format SFC Vue.js"
+  short_description: "Format and organize Vue SFC files"
+  default_prompt: "Use $format-sfc-vuejs to safely organize and format Vue single-file components."
