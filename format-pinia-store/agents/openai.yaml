@@ -1,0 +1,4 @@
+interface:
+  display_name: "Format Pinia Store"
+  short_description: "Standardize Pinia stores in JS/TS"
+  default_prompt: "Use $format-pinia-store to create or reorganize a Pinia store using the project standard."
