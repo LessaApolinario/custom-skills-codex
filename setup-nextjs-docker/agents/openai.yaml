@@ -1,0 +1,4 @@
+interface:
+  display_name: "Setup Next.js Docker"
+  short_description: "Configure Docker for Yarn Next.js apps"
+  default_prompt: "Use $setup-nextjs-docker to configure Docker for this Yarn-based Next.js project."
