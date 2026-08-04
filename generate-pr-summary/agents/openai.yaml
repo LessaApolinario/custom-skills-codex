@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate PR Summary"
+  short_description: "Draft GitHub PR titles and change bullets"
+  default_prompt: "Use $generate-pr-summary to create a concise GitHub Pull Request title and bullet-point description from the conversation context."
