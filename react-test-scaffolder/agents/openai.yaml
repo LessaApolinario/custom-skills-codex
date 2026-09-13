@@ -1,4 +1,4 @@
 interface:
   display_name: "React Test Scaffolder"
-  short_description: "Planeje skeletons de testes React e Next.js"
-  default_prompt: "Use $react-test-scaffolder para analisar este projeto e criar ou atualizar skeletons de testes sem implementar assertions."
+  short_description: "Organize skeletons unitários e de integração"
+  default_prompt: "Use $react-test-scaffolder para analisar este projeto e organizar skeletons unitários e de integração sem implementar testes."
