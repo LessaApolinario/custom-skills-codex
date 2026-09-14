@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vue Test Scaffolder"
+  short_description: "Organize skeletons Vue unitários e de integração"
+  default_prompt: "Use $vue-test-scaffolder para analisar este projeto Vue e organizar skeletons unitários e de integração sem implementar testes."
