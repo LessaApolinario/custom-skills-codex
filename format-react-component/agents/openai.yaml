@@ -1,0 +1,4 @@
+interface:
+  display_name: "Format React Component"
+  short_description: "Create and safely format React components"
+  default_prompt: "Use $format-react-component to create, organize, or safely refactor a React or Next.js component."
