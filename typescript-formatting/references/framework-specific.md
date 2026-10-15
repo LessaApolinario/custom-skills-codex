@@ -48,3 +48,7 @@ Preserve all characters inside template literals, including indentation, line en
 ## Comments, JSDoc, and directives
 
 May adjust outer comment wrapping/indentation only without changing its content or attachment. Preserve intentional whitespace in ASCII art, code samples, markdown tables and lint suppressions. Never alter the position/target meaning of `eslint-disable`, `prettier-ignore`, `@ts-expect-error`, `@ts-ignore`, or pragmas.
+
+## React / Next.js destructuring correction
+
+Framework detection is context, not authority over quotes, semicolons, trailing commas, wrapping or indentation. Never assume a frontend project uses a particular style. For component-argument prop destructuring and values destructured from hooks, preserve short single-line forms if they fit within the effective per-file formatter width and the formatter keeps them; do not expand solely on binding count. Example: `const { data, error, loading, refetch } = useUsers();` and `function Card({ title, price, currency }: Props) { ... }`. JSX attributes can be wrapped according to effective formatter output; do not force a prop-per-line approach when save reverses it.

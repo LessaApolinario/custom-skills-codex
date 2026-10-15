@@ -4,7 +4,7 @@ These rules apply **only when compatible** with effective project configuration 
 
 ## Whitespace and punctuation
 
-Use two-space indentation, spaces around operators and inside named import braces, semicolons, single-quoted strings where conversion is safe, no trailing commas, and preferred soft width of 100 columns. Preserve original line ending scheme when feasible. Never break literal values or semantic strings merely to meet width.
+**FALLBACK ONLY** if the effective formatter configuration cannot determine a rule: use two-space indentation, spaces around operators and inside named import braces, semicolons, single-quoted strings where conversion is safe, no trailing commas, and preferred soft width of 100 columns. Project/editor per-file rules override each item. Preserve original line ending scheme when feasible. Never break literal values or semantic strings merely to meet width.
 
 Before:
 ```ts
@@ -22,7 +22,7 @@ const envSchema = z.object({
 
 ## Objects, arrays, and destructuring
 
-One property per line in multi-property object literals, including nested configuration objects and objects passed to decorators. Keep an object literal as a structural expression; never reorder keys, reassign values, or change spread positions. Small array-of-object entries are adjacent (no blank lines between items). Expand multi-property destructuring across lines; preserve aliases, defaults, rest, and evaluation order.
+For object literals, prefer one property per line only if stable under effective save-time formatting; otherwise keep the formatter's output and report any preference mismatch. Keep an object literal as a structural expression; never reorder keys, reassign values, or change spread positions. Small array-of-object entries are adjacent (no blank lines between items). **Do not automatically expand destructuring just because it has multiple bindings.** In particular, keep short hook returns (`const { data, error, isLoading, refetch } = useQuery()`) and React/Next component parameter props on one line when they fit and the formatter keeps them that way. Break only if the effective formatter breaks, the line is too long by its rules, or existing style clearly requires it. Preserve aliases, defaults, rest, and evaluation order.
 
 ```ts
 const settings = {
@@ -41,11 +41,7 @@ const users = [
   }
 ];
 
-const {
-  id,
-  name,
-  email
-} = user;
+const { id, name, email } = user;
 ```
 
 ## Imports and exported declarations

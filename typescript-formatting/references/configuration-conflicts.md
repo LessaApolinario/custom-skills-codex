@@ -4,6 +4,10 @@
 
 Safety > effective project rules > skill defaults. Read project config without modifying it, and honor ignore rules and generated-file markers. Do not install a formatter, ESLint plugin, or TypeScript dependency. Existing project formatter and lint behavior outrank stylistic examples in this skill.
 
+## Save-time style authority
+
+Read [save-time-formatting.md](save-time-formatting.md). A VS Code Ctrl+S change can come from Prettier, ESLint auto-fix code actions, the built-in TS formatter, or multiple stages, not simply ESLint. Resolve per-file active settings where possible. If exact editor behavior is inaccessible, do not pretend to have identified it; ask the user to identify the default formatter or give representative before/after snippets, or limit edits to formatter-stable safe changes.
+
 ## Discovery
 
 Check applicable local config (nearest relevant config for target file): package manifest/scripts and lockfile, `.editorconfig`, `.prettierrc*`, `prettier.config.*`, `.prettierignore`, `eslint.config.*`, `.eslintrc*`, lint ignore rules, `tsconfig*.json` and generated markers. Avoid assuming a single repo-root config controls nested packages. Use already installed executable commands; do not invoke `npx`/`yarn dlx` in a way that downloads packages.
