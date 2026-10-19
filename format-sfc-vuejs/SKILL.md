@@ -33,7 +33,17 @@ Order SFC blocks as:
 3. `style`
 4. custom blocks, such as `i18n` or `docs`
 
-Keep exactly one blank line between blocks. Require a script, a template, and at least one style block even when unused. Add only missing blocks: an empty `<script setup>` without `lang`, an empty `<template>`, or an empty `<style>` without attributes. Preserve existing empty blocks, attributes, multiple style blocks, and their relative order. Preserve coexisting traditional and setup scripts in their relative order; do not add a setup script when a traditional script already exists. The traditional-script conversion authorization rule still applies.
+Keep exactly one blank line between blocks. Require a script, a template, and at least one style block even when unused. Add only missing blocks: an empty `<script setup lang="ts">` for TypeScript or `<script setup>` for JavaScript, an empty `<template>`, or an empty `<style scoped>`. Determine the new script language from explicit user instructions, then the project's Vue SFC language convention; default to JavaScript when no convention can be established. Preserve existing script languages rather than migrating them. Always use `scoped` when creating a missing style block; preserve attributes on existing styles. Preserve existing empty blocks, multiple style blocks, and their relative order. Preserve coexisting traditional and setup scripts in their relative order; do not add a setup script when a traditional script already exists. The traditional-script conversion authorization rule still applies.
+
+Keep opening and closing tags of empty script, template, and style blocks on the same line, including existing whitespace-only blocks. Preserve attributes and use paired tags, not self-closing tags. Keep non-empty blocks multiline. For example:
+
+```vue
+<script setup lang="ts"></script>
+
+<template></template>
+
+<style scoped></style>
+```
 
 ## Object Generic Interfaces
 

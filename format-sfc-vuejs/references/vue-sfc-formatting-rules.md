@@ -22,22 +22,31 @@ When these conflict, preserve behavior, keep the declaration in its required pos
 
 ## SFC Blocks
 
-Order blocks as scripts, `template`, styles, then custom blocks. Preserve all attributes, including `lang`, `scoped`, `module`, and `src`. Do not add or remove `scoped`. Do not merge blocks. Preserve multiple style blocks and coexisting traditional/setup scripts in their respective relative order.
+Order blocks as scripts, `template`, styles, then custom blocks. Preserve all attributes on existing blocks, including `lang`, `scoped`, `module`, and `src`. Do not add or remove `scoped` on existing styles. Do not merge blocks. Preserve multiple style blocks and coexisting traditional/setup scripts in their respective relative order.
 
-Require a script, a template, and at least one style block even when unused. Do not remove existing blocks. Add only absent block kinds, with opening and closing tags on separate lines and no placeholder content:
+Require a script, a template, and at least one style block even when unused. Do not remove existing blocks. Add only absent block kinds without placeholder content. Empty script, template, and style blocks must have opening and closing tags on the same line, including existing whitespace-only blocks. Preserve attributes and use paired tags, not self-closing tags. Blocks containing code, markup, or comments are not empty and remain multiline:
+
+For JavaScript:
 
 ```vue
-<script setup>
-</script>
+<script setup></script>
 
-<template>
-</template>
+<template></template>
 
-<style>
-</style>
+<style scoped></style>
 ```
 
-Use exactly one blank line between blocks. A newly added script has no `lang`; a newly added style has no attributes. Existing script languages and style attributes remain unchanged. Any existing script satisfies the script requirement; do not add setup alongside a traditional script just to fill the requirement. Files requiring traditional-script conversion still follow the authorization/skip workflow before writing. Template/style formatting opt-outs skip content formatting, not creation of missing required blocks.
+For TypeScript:
+
+```vue
+<script setup lang="ts"></script>
+
+<template></template>
+
+<style scoped></style>
+```
+
+Use exactly one blank line between blocks. Choose the language for a missing script from explicit user instructions, then the project's Vue SFC language convention (inspect nearby components and project configuration); default to JavaScript if no convention can be established. Create `<script setup lang="ts">` for TypeScript and `<script setup>` without `lang` for JavaScript. Always create a missing style as `<style scoped>`. Existing script languages and style attributes remain unchanged. Any existing script satisfies the script requirement; do not add setup alongside a traditional script just to fill the requirement. Files requiring traditional-script conversion still follow the authorization/skip workflow before writing. Template/style formatting opt-outs skip content formatting, not creation of missing required blocks.
 
 ## Imports
 
@@ -412,7 +421,7 @@ Use 2-space indentation in CSS, SCSS, Less, and other style languages.
 
 Preserve language, scope, modules, selectors, properties, values, variables, mixins, imports, comments, media queries, and keyframes.
 
-Do not reorder properties, alter selectors, alter values, convert units, add/remove `scoped`, convert SCSS to CSS, or rename classes.
+Do not reorder properties, alter selectors, alter values, convert units, add/remove `scoped` on existing style blocks, convert SCSS to CSS, or rename classes. When no style block exists, create an empty `<style scoped>` as required by the SFC Blocks section.
 
 ## Traditional Script Conversion
 
@@ -514,8 +523,8 @@ After formatting:
 2. Validate JavaScript or TypeScript syntax.
 3. Validate template syntax when tooling is available.
 4. Validate style syntax when tooling is available.
-5. Confirm block closing tags and attributes, the presence of script/template/style even when empty, and preservation of existing script/style multiplicity and order.
-6. Confirm no declaration was lost.
+5. Confirm block closing tags and attributes, the presence of script/template/style even when empty, and preservation of existing script/style multiplicity and order. New scripts must use `setup` and the appropriate TypeScript/JavaScript language form; newly created styles must have `scoped`.
+6. Confirm empty script/template/style blocks have paired tags on a single line, exactly one blank line separates blocks, and no declaration was lost.
 7. Confirm imports are preserved.
 8. Confirm store and `storeToRefs` adjacency.
 9. Confirm 2-space indentation and no tabs.
