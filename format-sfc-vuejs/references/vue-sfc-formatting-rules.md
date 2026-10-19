@@ -22,9 +22,22 @@ When these conflict, preserve behavior, keep the declaration in its required pos
 
 ## SFC Blocks
 
-Order blocks as `script setup`, `template`, `style`, then custom blocks. Preserve all attributes, including `lang`, `scoped`, and `module`. Do not add or remove `scoped`. Do not merge blocks. Preserve multiple style blocks in their relative order.
+Order blocks as scripts, `template`, styles, then custom blocks. Preserve all attributes, including `lang`, `scoped`, `module`, and `src`. Do not add or remove `scoped`. Do not merge blocks. Preserve multiple style blocks and coexisting traditional/setup scripts in their respective relative order.
 
-Do not create empty blocks or remove existing blocks.
+Require a script, a template, and at least one style block even when unused. Do not remove existing blocks. Add only absent block kinds, with opening and closing tags on separate lines and no placeholder content:
+
+```vue
+<script setup>
+</script>
+
+<template>
+</template>
+
+<style>
+</style>
+```
+
+Use exactly one blank line between blocks. A newly added script has no `lang`; a newly added style has no attributes. Existing script languages and style attributes remain unchanged. Any existing script satisfies the script requirement; do not add setup alongside a traditional script just to fill the requirement. Files requiring traditional-script conversion still follow the authorization/skip workflow before writing. Template/style formatting opt-outs skip content formatting, not creation of missing required blocks.
 
 ## Imports
 
@@ -51,6 +64,94 @@ Rules:
 ## Types
 
 Place interfaces, types, enums, namespaces, and type-only declarations after imports and before Vue macros. Preserve TypeScript features such as generics, assertions, `satisfies`, `as const`, overloads, decorators, typed props, typed emits, typed slots, typed refs, and typed injects.
+
+### Object Generic Interfaces
+
+In TypeScript scripts, replace explicit inline object literal generic types with named interfaces. Apply to `defineProps`, including `withDefaults(defineProps())`, `defineEmits`, `defineExpose`, `defineSlots`, `defineModel`, and Vue APIs accepting such generics, including `ref`, `shallowRef`, `reactive`, `shallowReactive`, `computed`, `inject`, and `provide`. Recognize imported aliases by their Vue origin; do not apply the rule to unrelated functions sharing these names.
+
+- Place extracted interfaces in the type declaration group after imports. Keep local generic parameters in scope: parameterize the interface and pass the original type parameters when safe; otherwise preserve the type and warn.
+- Prefer `Props`, `Emits`, `Exposed`, and `Slots` for their macros. For other calls use descriptive PascalCase names derived from the value or purpose, such as `UserState` for `user`. Reuse an equivalent interface already in scope. On a name collision, qualify with the component/value name; use a numeric suffix only if still necessary. Never merge with an unrelated existing declaration.
+- Preserve optional/readonly modifiers, index and call signatures, overload order, tuple labels, comments, and member types. Extract the object shape at the generic boundary; nested member shapes may remain inline inside the interface.
+- Keep existing named types and aliases unchanged. Do not invent generics for inferred calls, convert runtime declarations to type declarations, change runtime arguments/defaults, or migrate JavaScript to TypeScript.
+- Preserve unions, intersections, arrays, tuples, mapped types, and conditional types as compositions. Extract compatible object literal constituents only, e.g. `ref<{ id: string } | null>(null)` becomes `ref<UserState | null>(null)` with `interface UserState { id: string; }`. Do not wrap a union or mapped type in an invalid interface, flatten a composition, or extract mapped members as interface members.
+- Preserve type-checking semantics and the installed Vue compiler's type-to-runtime support. If extraction cannot be proven safe, retain the original type and report a warning. For `defineProps`/`defineEmits`, check compiler compatibility rather than assuming all TypeScript types can be resolved. See the [official Vue macro documentation](https://vuejs.org/api/sfc-script-setup.html#type-only-props-emit-declarations).
+
+Props with defaults, before:
+
+```ts
+const props = withDefaults(defineProps<{
+  readonly title?: string;
+}>(), { title: 'Users' });
+```
+
+After:
+
+```ts
+interface Props {
+  readonly title?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), { title: 'Users' });
+```
+
+Emits, before:
+
+```ts
+const emit = defineEmits<{
+  save: [id: number];
+  cancel: [];
+}>();
+```
+
+After:
+
+```ts
+interface Emits {
+  save: [id: number];
+  cancel: [];
+}
+
+const emit = defineEmits<Emits>();
+```
+
+If the original emits type uses call signatures such as `(event: 'save', id: number): void;`, copy those signatures into `Emits` unchanged rather than converting them to tuple syntax.
+
+Expose, before (with an existing `reset` function):
+
+```ts
+defineExpose<{
+  reset: () => void;
+}>({ reset });
+```
+
+After (interface in the type group; call remains after watchers):
+
+```ts
+interface Exposed {
+  reset: () => void;
+}
+
+// Other component declarations remain in their required positions.
+defineExpose<Exposed>({ reset });
+```
+
+Reactivity, before:
+
+```ts
+const user = ref<{
+  id: string;
+} | null>(null);
+```
+
+After:
+
+```ts
+interface UserState {
+  id: string;
+}
+
+const user = ref<UserState | null>(null);
+```
 
 ## Vue Macros
 
@@ -413,13 +514,14 @@ After formatting:
 2. Validate JavaScript or TypeScript syntax.
 3. Validate template syntax when tooling is available.
 4. Validate style syntax when tooling is available.
-5. Confirm block closing tags and attributes.
+5. Confirm block closing tags and attributes, the presence of script/template/style even when empty, and preservation of existing script/style multiplicity and order.
 6. Confirm no declaration was lost.
 7. Confirm imports are preserved.
 8. Confirm store and `storeToRefs` adjacency.
 9. Confirm 2-space indentation and no tabs.
-10. Confirm idempotence when practical: `format(format(source)) === format(source)`.
-11. Stop writing if validation fails.
+10. Confirm eligible explicit inline object generic types use interfaces without changing member types, compositions, defaults, arguments, or inference; confirm collision-free names and Vue compiler compatibility. Preserve JavaScript.
+11. Confirm idempotence when practical: `format(format(source)) === format(source)`, including no duplicate interfaces or required blocks on the second pass.
+12. Stop writing if validation fails.
 
 For `--write`, write to a temporary file, validate the temporary file, then replace the original only after success. With `--backup`, create `Component.vue.bak`.
 

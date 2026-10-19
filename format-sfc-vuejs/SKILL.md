@@ -19,7 +19,7 @@ For the complete ordering and formatting standard, read `references/vue-sfc-form
 2. Parse every SFC into blocks. Preserve all block attributes, languages, comments, custom blocks, and multiple style blocks.
 3. If a file has a traditional `script` block and no `script setup`, stop for that file and ask for authorization before conversion. In non-interactive work, require an explicit instruction equivalent to `--convert-script-setup`; require a second explicit instruction equivalent to `--allow-partial-conversion` for risky partial conversions.
 4. Read the detailed reference and classify top-level `script setup` declarations before moving anything.
-5. Apply only safe formatting and safe movement. If a declaration has initialization dependencies or side effects, keep the needed relative order and emit a warning.
+5. Extract explicit inline object generic types into named interfaces as described below, add missing required SFC blocks, and apply only safe formatting and safe movement. If a declaration has initialization dependencies or side effects, keep the needed relative order and emit a warning.
 6. Format `template` and `style` blocks conservatively unless the user asks not to. Do not reorder template nodes, directives, attributes, CSS declarations, selectors, or style values unless explicitly requested.
 7. Validate before writing: parse the SFC again, validate script syntax, confirm block closing tags and attributes, confirm declarations were not lost, confirm store/storeToRefs adjacency, confirm 2-space indentation and no tabs, and check idempotence when practical.
 8. Write only after validation succeeds. Preserve the original file on failure.
@@ -28,12 +28,18 @@ For the complete ordering and formatting standard, read `references/vue-sfc-form
 
 Order SFC blocks as:
 
-1. `script setup`
+1. script blocks, including `script setup`
 2. `template`
 3. `style`
 4. custom blocks, such as `i18n` or `docs`
 
-Keep exactly one blank line between blocks. Preserve multiple `style` blocks and their relative order. Do not create empty blocks.
+Keep exactly one blank line between blocks. Require a script, a template, and at least one style block even when unused. Add only missing blocks: an empty `<script setup>` without `lang`, an empty `<template>`, or an empty `<style>` without attributes. Preserve existing empty blocks, attributes, multiple style blocks, and their relative order. Preserve coexisting traditional and setup scripts in their relative order; do not add a setup script when a traditional script already exists. The traditional-script conversion authorization rule still applies.
+
+## Object Generic Interfaces
+
+In TypeScript scripts, extract explicit inline object generic types into named interfaces after imports and before macros. Apply this to `defineProps` (also inside `withDefaults`), `defineEmits`, `defineExpose`, `defineSlots`, `defineModel`, and Vue APIs accepting object generic types, including `ref`, `reactive`, `computed`, `inject`, and `provide`.
+
+Prefer `Props`, `Emits`, `Exposed`, and `Slots`; otherwise derive descriptive PascalCase names from the value. Reuse equivalent interfaces in scope and avoid name collisions. Preserve existing named types, comments, modifiers, overloads, event tuples, runtime arguments, and defaults. Do not add generics to inferred calls or migrate JavaScript to TypeScript. Preserve complex type compositions and extract only compatible object literals without changing their meaning or Vue compiler support. Read the reference for examples and safety boundaries.
 
 ## Traditional Script Conversion
 
