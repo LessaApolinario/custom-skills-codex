@@ -12,6 +12,74 @@ Apply only after explicit approval of a concrete plan. Prefer small, independent
 6. **Reorganize locality** with specific approval if moving between files, modules or architectural layers.
 7. **Preserve comments expressing why** while removing only genuinely redundant comments; synchronize any approved affected docs.
 
+## Values and conditional intent (G25 and G28)
+
+Apply the criteria and source attribution in `clean-code-principles.md`. These examples illustrate choices, not mandatory transformations for all literals or conditions.
+
+### Name a domain limit (G25)
+
+Before:
+```typescript
+if (attempts >= 3) {
+  blockAccess();
+}
+```
+
+After:
+```typescript
+const MAX_LOGIN_ATTEMPTS = 3;
+
+if (attempts >= MAX_LOGIN_ATTEMPTS) {
+  blockAccess();
+}
+```
+
+Use this name only if the inspected context establishes login attempts. Preserve the value and comparison boundary; do not invent a rule. Conversely, `if (items.length === 0)` already expresses emptiness and need not introduce a constant for zero.
+
+### Encapsulate a domain decision (G28)
+
+Before:
+```typescript
+if (user.active && user.emailVerified && !user.suspended) {
+  allowAccess();
+}
+```
+
+After:
+```typescript
+function canAccessAccount(user: User): boolean {
+  return user.active && user.emailVerified && !user.suspended;
+}
+
+if (canAccessAccount(user)) {
+  allowAccess();
+}
+```
+
+Assumes boolean fields and a domain rule matching the name. Keep field reads in the same order and evaluate the predicate at the original decision point. An existing `if (isLoading)` is already expressive and needs no wrapper. A local `const canAccessAccount = ...` immediately before the decision can also help a one-off case; that is a contextual adaptation rather than G28's specific function-extraction guidance.
+
+### Keep guarded evaluation lazy
+
+Before:
+```typescript
+if (user !== null && hasPermission(user)) {
+  allowAccess();
+}
+```
+
+After:
+```typescript
+function canAccessAccount(user: User | null): boolean {
+  return user !== null && hasPermission(user);
+}
+
+if (canAccessAccount(user)) {
+  allowAccess();
+}
+```
+
+Do not compute `hasPermission(user)` before the null guard: that would eagerly execute a previously skipped call and could change exceptions or effects. Likewise, preserve outer guards when extracting nested conditions. Do not hoist or cache a boolean across mutations, `await`, loop iterations or other operations that can change the observed state. Keep the predicate at its original call site and preserve call counts, ordering and short circuiting; skip extraction if equivalence is uncertain.
+
 ## Multilingual examples (illustrative, not unconditional recipes)
 
 ### TypeScript: concise guard with identical null handling

@@ -9,7 +9,8 @@ Inspect context and usages before assigning a smell. Record location, evidence, 
 | Names | Uninformative, deceptive, inconsistent names; ambiguous units | Domain terminology, externally referenced symbols |
 | Functions | Mixed responsibilities; implicit state changes; convoluted flow | Existing abstractions, call sites, performance-sensitive paths |
 | Duplication | Same rule or algorithm maintained in multiple places | Whether similar sections intentionally evolve differently |
-| Conditionals | Deep nesting, opaque predicates, repeated branching | Evaluation order, short circuiting, side effects, null behavior |
+| Values | Literals hiding domain rules, limits, units or codes, even in a single occurrence (G25) | Whether meaning is already evident, existing constants, narrowest useful scope, independent rules with equal values |
+| Conditionals | Deep nesting, opaque predicates, decisions requiring reconstruction of a domain rule, repeated branching (G28) | Whether a predicate name explains intent better; keep already expressive conditions direct; preserve evaluation order, short circuiting, effects, null behavior and mutable-state reads |
 | Modules | Excessive coupling, poor locality, cyclic dependencies | Runtime module resolution and public surface |
 | Comments | Stale explanations, comments merely repeating code | Domain rationale, legal notices and required tool directives |
 | Errors | Swallowed errors, unclear propagation, inconsistent cleanup | Observable error contracts, logging, retry expectations |

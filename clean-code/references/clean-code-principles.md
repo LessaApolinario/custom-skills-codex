@@ -15,6 +15,16 @@ Use Robert C. Martin's *Clean Code* as the main conceptual reference, not as a c
 - **Tests and maintainability:** use existing test styles, and improve readability without turning test fixtures into brittle abstractions.
 - **Boy Scout principle:** improve only within the approved scope; do not treat adjacent issues as automatically authorized changes.
 
+## Meaningful values and conditions
+
+Robert C. Martin's *Clean Code*, chapter 17, presents **G25: Replace Magic Numbers with Named Constants** (p. 300) and **G28: Encapsulate Conditionals** (p. 301). The [publisher's sample](https://ptgmedia.pearsoncmg.com/images/9780132350884/samplepages/9780132350884.pdf) lists these heuristics. The following guidance paraphrases and adapts them; it is not a quotation from the book.
+
+- **G25:** replace values whose meaning is not self-evident with named constants expressing their domain purpose and, where useful, unit, such as `MAX_LOGIN_ATTEMPTS` or `RETRY_DELAY_MS`. A single occurrence can still hide a rule. Prefer an existing suitable constant; place new constants in the narrowest useful scope. Avoid names that merely spell out the value, such as `THREE`.
+- Keep literals when their meaning is already clear in context, such as `items.length === 0` for emptiness. Neither a blanket literal ban nor a blanket exemption for particular numbers is appropriate. The same numeric value can represent independent rules; do not merge constants solely because their values match.
+- **G28:** encapsulate a condition in a function or method whose name explains the decision when the expression hides intent or forces the reader to reconstruct a domain rule. Choose names such as `canAccessAccount(user)` rather than vague labels such as `checkCondition(user)`. Complexity and repetition are signals, not mandatory extraction thresholds.
+- A local semantic boolean can clarify a one-off decision; this is a contextual adaptation, not G28's specific recommendation to extract a function. Keep already expressive predicates and straightforward conditions direct when another name would add indirection without improving understanding. Compound conditions do not automatically require extraction.
+- Preserve short circuiting, evaluation order and timing, exceptions, effects and mutable-state reads. Evaluate local booleans at the original decision point; do not cache a decision across state changes or eagerly evaluate guarded expressions. See `refactoring-strategies.md` for examples.
+
 ## Secondary heuristics
 
 DRY, KISS, SOLID, cohesion, coupling and complexity measures may support a decision, but do not override the main goal, existing contracts, language idioms or simplicity. Favor direct code over speculative patterns, factories, service classes or generalized frameworks.
